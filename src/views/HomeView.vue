@@ -1,17 +1,8 @@
 <template>
   <div class="app">
-    <playlist-player
-      @play="onPlayerPlay"
-      @pause="onPlayerPause"
-      @ended="onPlayerEnded"
-      @loadeddata="onPlayerLoadeddata"
-      @waiting="onPlayerWaiting"
-      @playing="onPlayerPlaying"
-      @timeupdate="onPlayerTimeupdate"
-      @canplay="onPlayerCanplay"
-      @canplaythrough="onPlayerCanplaythrough"
-      @statechanged="playerStateChanged"
-    />
+    <template v-for="course in courses" :key="course.id">
+      <playlist-player v-if="course.videos.length > 0" :course="course" />
+    </template>
   </div>
 </template>
 
@@ -23,44 +14,21 @@ export default {
   },
   data() {
     return {
-      time: 0
+      time: 0,
+      categories: [],
+      courses: []
     }
   },
-  methods: {
-    onPlayerPlay({ event, player }) {
-      console.log(event.type)
-      player.setPlaying(true)
-    },
-    onPlayerPause({ event, player }) {
-      console.log(event.type)
-      player.setPlaying(false)
-    },
-    onPlayerEnded({ event, player }) {
-      console.log(event.type)
-      player.setPlaying(false)
-    },
-    onPlayerLoadeddata({ event }) {
-      console.log(event.type)
-    },
-    onPlayerWaiting({ event }) {
-      console.log(event.type)
-    },
-    onPlayerPlaying({ event }) {
-      console.log(event.type)
-    },
-    onPlayerTimeupdate({ event }) {
-      this.time = event.target.currentTime
-      console.log({ event: event.type, time: event.target.currentTime })
-    },
-    onPlayerCanplay({ event }) {
-      console.log(event.type)
-    },
-    onPlayerCanplaythrough({ event }) {
-      console.log(event.type)
-    },
-    playerStateChanged({ event }) {
-      console.log(event.type)
-    }
+  beforeMount() {
+    fetch('http://your-video-api.test/api/categories').then((response) => {
+      response.json().then((data) => {
+        this.categories = data
+        this.courses = []
+        this.categories.forEach((category) => {
+          this.courses.push(...category.courses)
+        })
+      })
+    })
   }
 }
 </script>

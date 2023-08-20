@@ -1,32 +1,30 @@
 <template>
-  <div>
-    <video
-      :src="src"
-      :muted="muted"
-      :autoplay="autoplay"
-      :controls="controls"
-      :loop="loop"
-      :width="width"
-      :height="height"
-      :poster="poster"
-      :preload="preload"
-      :playsinline="true"
-      ref="player"
+  <video
+    v-show="isShowing"
+    :src="video.download_url"
+    :muted="muted"
+    :autoplay="autoplay"
+    :controls="controls"
+    :loop="loop"
+    :poster="poster"
+    :preload="preload"
+    :playsinline="true"
+    :style="{
+      width: '100%',
+      height: '100%'
+    }"
+    ref="player"
+    crossorigin="anonymous"
+  >
+    <track
+      v-if="video.subtitle_url"
+      :src="video.subtitle_url"
+      kind="subtitles"
+      srclang="en"
+      label="English"
+      default
     />
-    <slot
-      name="controls"
-      :play="play"
-      :pause="pause"
-      :toggle-play="togglePlay"
-      :playing="playing"
-      :percentage-played="percentagePlayed"
-      :seek-to-percentage="seekToPercentage"
-      :duration="duration"
-      :convert-time-to-duration="convertTimeToDuration"
-      :video-muted="videoMuted"
-      :toggle-mute="toggleMute"
-    ></slot>
-  </div>
+  </video>
 </template>
 
 <script lang="ts">
@@ -40,42 +38,37 @@ const EVENTS = [
   'timeupdate',
   'canplay',
   'canplaythrough',
-  'statechanged'
+  'statechanged',
+  'volumechange'
 ]
 
 export default {
   name: 'VideoPlayer',
   props: {
-    src: {
-      type: String,
+    time: {
+      type: Number,
+      required: false,
+      default: 0
+    },
+    video: {
+      type: Object,
+      required: true
+    },
+    index: {
+      type: Number,
       required: true
     },
     controls: {
       type: Boolean,
       required: false,
-      default: false
+      default: true
     },
     loop: {
       type: Boolean,
       required: false,
       default: false
     },
-    width: {
-      type: Number,
-      required: false,
-      default: 500
-    },
-    height: {
-      type: Number,
-      required: false,
-      default: 281
-    },
     autoplay: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
-    muted: {
       type: Boolean,
       required: false,
       default: false
@@ -88,24 +81,61 @@ export default {
       type: String,
       required: false,
       default: 'auto'
-    }
-  },
-  data() {
-    return {
-      playing: false,
-      duration: 0,
-      percentagePlayed: 0,
-      videoMuted: false
+    },
+    playing: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    muted: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   mounted() {
     this.bindEvents()
 
     if (this.$refs.player.muted) {
-      this.setMuted(true)
+      // this.muted = true
     }
   },
-  emits: ['addDuration'],
+  emits: ['updateDuration', 'volumechange', ...EVENTS],
+  computed: {
+    player: function () {
+      return this.$refs.player
+    },
+    isPlaying: function () {
+      return this.playing && this.isShowing
+    },
+    isShowing: function () {
+      // return true
+      let start = this.video.start || 0
+      let end = this.video.end || 0
+      return start <= this.time && (end == 0 || end >= this.time)
+    }
+  },
+  data() {
+    return {
+      duration: 0
+    }
+  },
+  watch: {
+    isPlaying: function (newVal) {
+      if (newVal) {
+        this.play()
+      } else {
+        this.pause()
+      }
+    },
+    muted: function (newVal) {
+      if (newVal) {
+        this.mute()
+      } else {
+        this.unmute()
+      }
+    }
+  },
   methods: {
     bindEvents() {
       EVENTS.forEach((event) => {
@@ -121,14 +151,18 @@ export default {
         (event) => {
           if (which === 'loadeddata') {
             this.duration = player.duration
-            this.$emit('addDuration', player.duration)
+
+            this.$emit('updateDuration', {
+              index: this.index,
+              videoDuration: player.duration
+            })
           }
 
-          if (which === 'timeupdate') {
-            this.percentagePlayed = (player.currentTime / player.duration) * 100
+          if (which === 'play' && this.isShowing) {
+            this.$refs.player.currentTime = this.time - this.video.start
           }
 
-          this.$emit(which, { event, player: this })
+          this.$emit(which, { index: this.index, event, player: this })
         },
         true
       )
@@ -136,56 +170,18 @@ export default {
 
     play() {
       this.$refs.player.play()
-      this.setPlaying(true)
     },
 
     pause() {
       this.$refs.player.pause()
-      this.setPlaying(false)
-    },
-
-    togglePlay() {
-      if (this.playing) {
-        this.pause()
-      } else {
-        this.play()
-      }
-    },
-
-    setPlaying(state) {
-      this.playing = state
-    },
-
-    seekToPercentage(percentage) {
-      this.$refs.player.currentTime = (percentage / 100) * this.duration
-    },
-
-    convertTimeToDuration(seconds) {
-      return [parseInt((seconds / 60) % 60, 10), parseInt(seconds % 60, 10)]
-        .join(':')
-        .replace(/\b(\d)\b/g, '0$1')
     },
 
     mute() {
       this.$refs.player.muted = true
-      this.setMuted(true)
     },
 
     unmute() {
       this.$refs.player.muted = false
-      this.setMuted(false)
-    },
-
-    toggleMute() {
-      if (this.videoMuted) {
-        this.unmute()
-      } else {
-        this.mute()
-      }
-    },
-
-    setMuted(state) {
-      this.videoMuted = state
     }
   }
 }

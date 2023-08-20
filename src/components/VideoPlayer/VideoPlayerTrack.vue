@@ -1,13 +1,6 @@
 <template>
   <div class="video-track">
-    <input
-      type="range"
-      min="0"
-      max="100"
-      step="1"
-      :value="percentage.toFixed(1)"
-      @input="onInput"
-    />
+    <input type="range" min="0" max="100" :step="step" :value="percentage" @input="onInput" />
   </div>
 </template>
 
@@ -16,6 +9,10 @@ export default {
   name: 'VideoPlayerTrack',
   props: {
     percentage: {
+      type: Number,
+      required: true
+    },
+    step: {
       type: Number,
       required: true
     }
@@ -37,6 +34,7 @@ input[type='range'] {
   -webkit-appearance: none;
   background-color: #ccc;
   border-radius: 5px;
+  width: 100%;
 }
 
 input[type='range']:focus {
