@@ -51,6 +51,7 @@ const percentagePlayed = ref(0)
 const time = ref(0)
 const playing = ref(false)
 const muted = ref(false)
+const seekValue = ref(0)
 const props = defineProps({
   course: {
     type: Object,
@@ -80,7 +81,15 @@ function onUpdateDuration({ index, videoDuration }) {
 function onPlay() {
   playing.value = true
 }
-function onPause() {
+function onPause({ index }) {
+  if (time.value > videos[index].end) return
+  if (seekValue.value !== -1) {
+    time.value = (seekValue.value / 100) * duration.value
+    playing.value = true
+    seekValue.value = -1
+    return
+  }
+
   playing.value = false
 }
 function onEnded({ index }) {
@@ -96,10 +105,10 @@ function onWaiting(event) {
   console.log('waiting', event)
 }
 function onTimeUpdate({ index, event }) {
-  time.value = videos[index].start + event.target.currentTime
-  console.log('timeupdate buffered', event.target.buffered.start(0), event.target.buffered.end(0))
-
-  percentagePlayed.value = (time.value / duration.value) * 100
+  if (time.value <= videos[index].end) {
+    time.value = videos[index].start + event.target.currentTime
+    percentagePlayed.value = (time.value / duration.value) * 100
+  }
 }
 function onPlaying(event) {
   console.log('playing', event)
@@ -117,9 +126,10 @@ function onVolumeChange(e) {
   // console.log('volumechange', e, e.event.target.volume)
 }
 function onSeek(value) {
-  // console.log('seek', value)
+  // // console.log('seek', value)
   time.value = (value / 100) * duration.value
-  playing.value = true
+  playing.value = false
+  seekValue.value = value
 }
 function convertTimeToDuration(seconds: number) {
   return [parseInt(String((seconds / 60) % 60), 10), parseInt(String(seconds % 60), 10)]

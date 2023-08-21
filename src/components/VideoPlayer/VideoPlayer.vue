@@ -94,6 +94,9 @@ export default {
     }
   },
   mounted() {
+    if (this.time >= this.video.start && this.time <= this.video.end) {
+      this.$refs.player.currentTime = this.time - this.video.start
+    }
     this.bindEvents()
 
     if (this.$refs.player.muted) {
@@ -121,6 +124,11 @@ export default {
     }
   },
   watch: {
+    time: function () {
+      if (!this.playing && this.isShowing) {
+        this.player.currentTime = this.time - this.video.start
+      }
+    },
     isPlaying: function (newVal) {
       if (newVal) {
         this.play()
@@ -152,6 +160,21 @@ export default {
           if (which === 'loadeddata') {
             this.duration = player.duration
 
+            if (this.isPlaying) {
+              console.log(
+                'loadeddata',
+                this.isPlaying,
+                this.isShowing,
+                this.time,
+                this.video.start,
+                this.video.end,
+                this.video.duration,
+                this.duration,
+                this.video
+              )
+
+              this.play()
+            }
             this.$emit('updateDuration', {
               index: this.index,
               videoDuration: player.duration
