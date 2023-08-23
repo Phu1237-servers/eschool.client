@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div style="width: 500px;">
 		<div v-for="(video, index) in videos" :key="index">
 			<VideoPlayer
 				class="flex-1"
@@ -42,7 +42,10 @@
 				{{ muted ? 'unmute' : 'mute' }}
 			</button>
 		</div> -->
-		<Controls />
+		<Controls
+			@play="onPlay"
+			@pause="onPause"
+		/>
 	</div>
 </template>
 
@@ -86,8 +89,8 @@ function onUpdateDuration({ index, videoDuration }) {
 function onPlay() {
   playing.value = true
 }
-function onPause({ index }) {
-  if (time.value > videos[index].end) return
+function onPause({ index } = {}) {
+  if (index && time.value > videos[index].end) return
   if (seekValue.value !== -1) {
     time.value = (seekValue.value / 100) * duration.value
     playing.value = true

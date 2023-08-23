@@ -8,7 +8,8 @@
 		</div>
 		<div class="track-tool flex pt-2">
 			<div class="flex items-center flex-1">
-				<font-awesome-icon :icon="['fas', 'play']" size="lg" />
+				<font-awesome-icon :icon="['fas', 'play']" size="lg" @click="$emit('play')" />
+				<font-awesome-icon :icon="['fas', 'pause']" size="lg" @click="$emit('pause')" />
 				<font-awesome-icon :icon="['fas', 'forward-step']" size="lg" />
 				<button class="a">
 					<font-awesome-icon :icon="['fas', 'volume-xmark']" size="lg" v-if="volumn === 0" />
