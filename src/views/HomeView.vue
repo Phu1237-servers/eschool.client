@@ -20,7 +20,8 @@ export default {
     }
   },
   beforeMount() {
-    fetch('http://your-video-api.test/api/categories').then((response) => {
+    // fetch('http://your-video-api.test/api/categories').then((response) => {
+    fetch('http://localhost:8001/api/categories').then((response) => {
       response.json().then((data) => {
         this.categories = data
         this.courses = []

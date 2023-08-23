@@ -1,45 +1,49 @@
 <template>
-  <template v-for="(video, index) in videos" :key="index">
-    <VideoPlayer
-      v-if="video.start <= time + 10"
-      :video="video"
-      :index="index"
-      :playing="playing"
-      :muted="muted"
-      :time="time"
-      @updateDuration="onUpdateDuration"
-      @play="onPlay"
-      @pause="onPause"
-      @ended="onEnded"
-      @loadeddata="onLoadedData"
-      @waiting="onWaiting"
-      @playing="onPlaying"
-      @timeupdate="onTimeUpdate"
-      @canplay="onCanPlay"
-      @canplaythrough="onCanPlayThrough"
-      @statechanged="onStateChanged"
-      @volumechange="onVolumeChange"
-    >
-    </VideoPlayer>
-  </template>
-  <div class="videoplayer-controls">
-    <button @click="playing = !playing" class="videoplayer-controls-toggleplay">
-      {{ playing ? 'pause' : 'play' }}
-    </button>
-    <div class="videoplayer-controls-time">
-      {{ convertTimeToDuration(time) }} /
-      {{ convertTimeToDuration(duration) }}
-    </div>
-    <VideoPlayerTrack
-      :step="parseInt(duration) / 1000"
-      :percentage="percentagePlayed"
-      @seek="onSeek"
-      class="videoplayer-controls-track"
-    />
-    <button @click="muted = !muted" class="videoplayer-controls-togglemute">
-      {{ muted ? 'unmute' : 'mute' }}
-    </button>
-  </div>
+	<div>
+		<div v-for="(video, index) in videos" :key="index">
+			<VideoPlayer
+				class="flex-1"
+				v-if="video.start <= time + 10"
+				:video="video"
+				:index="index"
+				:playing="playing"
+				:muted="muted"
+				:time="time"
+				@updateDuration="onUpdateDuration"
+				@play="onPlay"
+				@pause="onPause"
+				@ended="onEnded"
+				@loadeddata="onLoadedData"
+				@waiting="onWaiting"
+				@playing="onPlaying"
+				@timeupdate="onTimeUpdate"
+				@canplay="onCanPlay"
+				@canplaythrough="onCanPlayThrough"
+				@statechanged="onStateChanged"
+				@volumechange="onVolumeChange"
+			>
+			</VideoPlayer>
+		</div>
+		<!-- <div class="videoplayer-controls">
+			<button @click="playing = !playing" class="videoplayer-controls-toggleplay">
+				{{ playing ? 'pause' : 'play' }}
+			</button>
+			<div class="videoplayer-controls-time">
+				{{ convertTimeToDuration(time) }} /
+				{{ convertTimeToDuration(duration) }}
+			</div>
+			<VideoPlayerTrack
+				:step="parseInt(duration) / 1000"
+				:percentage="percentagePlayed"
+				@seek="onSeek"
+				class="videoplayer-controls-track"
+			/>
+			<button @click="muted = !muted" class="videoplayer-controls-togglemute">
+				{{ muted ? 'unmute' : 'mute' }}
+			</button>
+		</div> -->
+		<Controls />
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -47,6 +51,7 @@ import { log } from 'console'
 import VideoPlayer from './VideoPlayer.vue'
 import VideoPlayerTrack from './VideoPlayerTrack.vue'
 import { ref, toRefs } from 'vue'
+import Controls from './Controls.vue';
 const percentagePlayed = ref(0)
 const time = ref(0)
 const playing = ref(false)

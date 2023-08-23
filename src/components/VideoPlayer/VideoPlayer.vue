@@ -10,8 +10,8 @@
     :preload="preload"
     :playsinline="true"
     :style="{
-      width: '100%',
-      height: '100%'
+      // width: '100%',
+      // height: '100vh'
     }"
     ref="player"
     crossorigin="anonymous"
@@ -61,7 +61,7 @@ export default {
     controls: {
       type: Boolean,
       required: false,
-      default: true
+      default: false
     },
     loop: {
       type: Boolean,
