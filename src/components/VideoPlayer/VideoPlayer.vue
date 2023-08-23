@@ -97,11 +97,12 @@ export default {
     if (this.time >= this.video.start && this.time <= this.video.end) {
       this.$refs.player.currentTime = this.time - this.video.start
     }
+    this.$refs.player.playbackRate = 2
     this.bindEvents()
 
-    if (this.$refs.player.muted) {
-      // this.muted = true
-    }
+    // if (this.$refs.player.muted) {
+    // this.muted = true
+    // }
   },
   emits: ['updateDuration', 'volumechange', ...EVENTS],
   computed: {

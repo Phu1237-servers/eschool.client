@@ -9,10 +9,12 @@ import {
 	faVolumeXmark,
 	faVolumeLow,
 	faVolumeHigh,
-	faClosedCaptioning,
+  faClosedCaptioning,
 	faGear,
 	faExpand,
 } from '@fortawesome/free-solid-svg-icons'
+import {
+} from '@fortawesome/free-regular-svg-icons'
 
 library.add(
 	faUserSecret,

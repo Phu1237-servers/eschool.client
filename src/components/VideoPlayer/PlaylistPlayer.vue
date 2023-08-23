@@ -1,30 +1,30 @@
 <template>
-	<div style="width: 500px;">
-		<div v-for="(video, index) in videos" :key="index">
-			<VideoPlayer
-				class="flex-1"
-				v-if="video.start <= time + 10"
-				:video="video"
-				:index="index"
-				:playing="playing"
-				:muted="muted"
-				:time="time"
-				@updateDuration="onUpdateDuration"
-				@play="onPlay"
-				@pause="onPause"
-				@ended="onEnded"
-				@loadeddata="onLoadedData"
-				@waiting="onWaiting"
-				@playing="onPlaying"
-				@timeupdate="onTimeUpdate"
-				@canplay="onCanPlay"
-				@canplaythrough="onCanPlayThrough"
-				@statechanged="onStateChanged"
-				@volumechange="onVolumeChange"
-			>
-			</VideoPlayer>
-		</div>
-		<!-- <div class="videoplayer-controls">
+  <div style="width: 500px">
+    <div v-for="(video, index) in videos" :key="index">
+      <VideoPlayer
+        class="flex-1"
+        v-if="video.start <= time + 10"
+        :video="video"
+        :index="index"
+        :playing="playing"
+        :muted="muted"
+        :time="time"
+        @updateDuration="onUpdateDuration"
+        @play="onPlay"
+        @pause="onPause"
+        @ended="onEnded"
+        @loadeddata="onLoadedData"
+        @waiting="onWaiting"
+        @playing="onPlaying"
+        @timeupdate="onTimeUpdate"
+        @canplay="onCanPlay"
+        @canplaythrough="onCanPlayThrough"
+        @statechanged="onStateChanged"
+        @volumechange="onVolumeChange"
+      >
+      </VideoPlayer>
+    </div>
+    <!-- <div class="videoplayer-controls">
 			<button @click="playing = !playing" class="videoplayer-controls-toggleplay">
 				{{ playing ? 'pause' : 'play' }}
 			</button>
@@ -42,24 +42,32 @@
 				{{ muted ? 'unmute' : 'mute' }}
 			</button>
 		</div> -->
-		<Controls
-			@play="onPlay"
-			@pause="onPause"
-		/>
-	</div>
+    <PlayerControls
+      :playing="playing"
+      :duration="duration"
+      :volume="volume"
+      :time="time"
+      :playbackRate="playbackRate"
+      :videos="videos"
+      @play="onPlay"
+      @pause="onPause"
+      @changevolume="onVolumeChange"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { log } from 'console'
 import VideoPlayer from './VideoPlayer.vue'
 import VideoPlayerTrack from './VideoPlayerTrack.vue'
 import { ref, toRefs } from 'vue'
-import Controls from './Controls.vue';
+import PlayerControls from './PlayerControls.vue'
 const percentagePlayed = ref(0)
 const time = ref(0)
 const playing = ref(false)
 const muted = ref(false)
-const seekValue = ref(0)
+const volume = ref(100)
+const playbackRate = ref(1)
+const seekValue = ref(-1)
 const props = defineProps({
   course: {
     type: Object,
@@ -89,8 +97,9 @@ function onUpdateDuration({ index, videoDuration }) {
 function onPlay() {
   playing.value = true
 }
-function onPause({ index } = {}) {
-  if (index && time.value > videos[index].end) return
+function onPause() {
+  console.log(seekValue.value)
+
   if (seekValue.value !== -1) {
     time.value = (seekValue.value / 100) * duration.value
     playing.value = true
@@ -131,17 +140,12 @@ function onStateChanged(event) {
   console.log('statechanged', event)
 }
 function onVolumeChange(e) {
-  // console.log('volumechange', e, e.event.target.volume)
+  volume.value = e
 }
 function onSeek(value) {
   // // console.log('seek', value)
   time.value = (value / 100) * duration.value
   playing.value = false
   seekValue.value = value
-}
-function convertTimeToDuration(seconds: number) {
-  return [parseInt(String((seconds / 60) % 60), 10), parseInt(String(seconds % 60), 10)]
-    .join(':')
-    .replace(/\b(\d)\b/g, '0$1')
 }
 </script>
