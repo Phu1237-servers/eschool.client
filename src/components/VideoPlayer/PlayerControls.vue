@@ -1,7 +1,14 @@
 <template>
   <div class="track bg-black p-2">
     <div class="track-progress flex relative bg-blue-200 h-[4px]">
-      <div class="absolute" style="top: -50px">1:12</div>
+      <div
+        class="track-seek left absolute bg-black top-[-45px] border border-solid border-white border-2"
+      >
+        1:12
+      </div>
+      <div
+        class="absolute top-[-50%] w-[13px] h-[13px] top-[-4px] left-[-7px] bg-red-500 rounded-full"
+      ></div>
       <div class="inline-block buffer w-[20px] h-full" @mouseover="onHoverTrack" index="1"></div>
       <div class="inline-block bg-transparent w-[2px]"></div>
       <div class="inline-block buffer w-[40px] h-full" @mouseover="onHoverTrack" index="2"></div>
@@ -10,8 +17,15 @@
     </div>
     <div class="track-tool flex pt-2">
       <div class="flex items-center flex-1">
-        <font-awesome-icon v-if="playing" :icon="['fas', 'pause']" size="xl" @click="pause" />
-        <font-awesome-icon v-else :icon="['fas', 'play']" size="lg" @click="play" />
+        <button>
+          <font-awesome-icon
+            v-if="playing"
+            :icon="['fas', 'pause']"
+            size="xl"
+            @click="$emit('pause')"
+          />
+          <font-awesome-icon v-else :icon="['fas', 'play']" size="lg" @click="$emit('pause')" />
+        </button>
         <font-awesome-icon :icon="['fas', 'forward-step']" size="xl" />
         <div class="flex items-center" @mouseover="onHoverVolume" @mouseleave="onHoverOutVolumn">
           <button>
@@ -30,9 +44,22 @@
         <span>{{ convertTimeToDuration(time) }} / {{ convertTimeToDuration(duration) }}</span>
       </div>
       <div class="flex items-center text-right">
-        <font-awesome-icon :icon="['fas', 'closed-captioning']" size="lg" />
-        <font-awesome-icon :icon="['fas', 'gear']" size="lg" />
-        <font-awesome-icon :icon="['fas', 'expand']" size="xl" />
+        <button class="flex items-center" @click="$emit('cc')">
+          <font-awesome-icon
+            :icon="['fas', 'closed-captioning']"
+            size="lg"
+            :class="[cc ? 'border-b-2 border-red-600' : '']"
+          />
+        </button>
+        <button class="flex items-center">
+          <font-awesome-icon :icon="['fas', 'gear']" size="lg" />
+        </button>
+        <button @click="$emit('pip')">
+          <font-awesome-icon :icon="['far', 'window-restore']" />
+        </button>
+        <button class="flex items-center">
+          <font-awesome-icon :icon="['fas', 'expand']" size="xl" />
+        </button>
       </div>
     </div>
   </div>
@@ -50,6 +77,11 @@ const props = defineProps({
     type: Number,
     required: true,
     default: 0
+  },
+  cc: {
+    type: Boolean,
+    required: true,
+    default: false
   },
   playbackRate: {
     type: Number,
@@ -69,19 +101,13 @@ const props = defineProps({
     required: true
   }
 })
-const emits = defineEmits(['play', 'pause', 'changevolume'])
+const emits = defineEmits(['play', 'pause', 'changevolume', 'cc', 'pip'])
 
 const isHoverVolume = ref(false)
 const trackTooltipPosition = ref({
   left: 0,
   top: 0
 })
-function play() {
-  emits('play')
-}
-function pause() {
-  emits('pause')
-}
 function onHoverTrack(e) {
   trackTooltipPosition.value = {
     left: e.clientX - e.target.offsetLeft,
@@ -117,6 +143,28 @@ function convertTimeToDuration(seconds: number) {
 </script>
 
 <style lang="scss">
+.track-seek {
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 10px solid transparent;
+    border-top-color: #fff;
+  }
+  &.left::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    // transform: translateX(-50%);
+    border: 10px solid transparent;
+    border-top-color: #fff;
+    transform: rotate(135deg);
+    // tra
+  }
+}
 .track {
   color: #fff;
   input[type='range'] {

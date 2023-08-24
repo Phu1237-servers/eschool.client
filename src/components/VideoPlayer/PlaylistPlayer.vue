@@ -1,6 +1,6 @@
 <template>
   <div style="width: 500px">
-    <div v-for="(video, index) in videos" :key="index">
+    <div class="bg-black" v-for="(video, index) in videos" :key="index">
       <VideoPlayer
         class="flex-1"
         v-if="video.start <= time + 10"
@@ -24,34 +24,18 @@
       >
       </VideoPlayer>
     </div>
-    <!-- <div class="videoplayer-controls">
-			<button @click="playing = !playing" class="videoplayer-controls-toggleplay">
-				{{ playing ? 'pause' : 'play' }}
-			</button>
-			<div class="videoplayer-controls-time">
-				{{ convertTimeToDuration(time) }} /
-				{{ convertTimeToDuration(duration) }}
-			</div>
-			<VideoPlayerTrack
-				:step="parseInt(duration) / 1000"
-				:percentage="percentagePlayed"
-				@seek="onSeek"
-				class="videoplayer-controls-track"
-			/>
-			<button @click="muted = !muted" class="videoplayer-controls-togglemute">
-				{{ muted ? 'unmute' : 'mute' }}
-			</button>
-		</div> -->
     <PlayerControls
       :playing="playing"
       :duration="duration"
       :volume="volume"
+      :cc="cc"
       :time="time"
       :playbackRate="playbackRate"
       :videos="videos"
       @play="onPlay"
       @pause="onPause"
       @changevolume="onVolumeChange"
+      @cc="onCC"
     />
   </div>
 </template>
@@ -66,6 +50,7 @@ const time = ref(0)
 const playing = ref(false)
 const muted = ref(false)
 const volume = ref(100)
+const cc = ref(true)
 const playbackRate = ref(1)
 const seekValue = ref(-1)
 const props = defineProps({
@@ -141,6 +126,9 @@ function onStateChanged(event) {
 }
 function onVolumeChange(e) {
   volume.value = e
+}
+function onCC() {
+  cc.value = !cc.value
 }
 function onSeek(value) {
   // // console.log('seek', value)

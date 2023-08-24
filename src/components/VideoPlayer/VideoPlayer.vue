@@ -160,6 +160,7 @@ export default {
         (event) => {
           if (which === 'loadeddata') {
             this.duration = player.duration
+            this.$refs.player.requestPictureInPicture()
 
             if (this.isPlaying) {
               console.log(
