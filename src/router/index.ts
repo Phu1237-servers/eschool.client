@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import TheHeader from '@/components/TheHeader.vue'
+import TheFooter from '@/components/TheFooter.vue'
 import HomeView from '../views/HomeView.vue'
-import TrackView from '../views/TrackView.vue'
+import CourseView from '../views/CourseView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -8,12 +10,20 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      components: {
+        default: HomeView,
+        header: TheHeader,
+        footer: TheFooter,
+      }
     },
 		{
-			path: '/track',
-			name: 'track',
-			component: TrackView
+			path: '/courses/:id',
+			name: 'courses.show',
+			components: {
+        default: CourseView,
+        header: TheHeader,
+        footer: TheFooter,
+      }
 		}
   ]
 })

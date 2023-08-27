@@ -173,29 +173,39 @@
 
 "@fortawesome/free-brands-svg-icons@^6.4.2":
   version "6.4.2"
-  resolved "https://registry.yarnpkg.com/@fortawesome/free-brands-svg-icons/-/free-brands-svg-icons-6.4.2.tgz#9b8e78066ea6dd563da5dfa686615791d0f7cc71"
+  resolved "https://registry.npmjs.org/@fortawesome/free-brands-svg-icons/-/free-brands-svg-icons-6.4.2.tgz"
   integrity sha512-LKOwJX0I7+mR/cvvf6qIiqcERbdnY+24zgpUSouySml+5w8B4BJOx8EhDR/FTKAu06W12fmUIcv6lzPSwYKGGg==
   dependencies:
     "@fortawesome/fontawesome-common-types" "6.4.2"
 
 "@fortawesome/free-regular-svg-icons@^6.4.2":
   version "6.4.2"
-  resolved "https://registry.yarnpkg.com/@fortawesome/free-regular-svg-icons/-/free-regular-svg-icons-6.4.2.tgz#aee79ed76ce5dd04931352f9d83700761b8b1b25"
+  resolved "https://registry.npmjs.org/@fortawesome/free-regular-svg-icons/-/free-regular-svg-icons-6.4.2.tgz"
   integrity sha512-0+sIUWnkgTVVXVAPQmW4vxb9ZTHv0WstOa3rBx9iPxrrrDH6bNLsDYuwXF9b6fGm+iR7DKQvQshUH/FJm3ed9Q==
   dependencies:
     "@fortawesome/fontawesome-common-types" "6.4.2"
 
 "@fortawesome/free-solid-svg-icons@^6.4.2":
   version "6.4.2"
-  resolved "https://registry.yarnpkg.com/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-6.4.2.tgz#33a02c4cb6aa28abea7bc082a9626b7922099df4"
+  resolved "https://registry.npmjs.org/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-6.4.2.tgz"
   integrity sha512-sYwXurXUEQS32fZz9hVCUUv/xu49PEJEyUOsA51l6PU/qVgfbTb2glsTEaJngVVT8VqBATRIdh7XVgV1JF1LkA==
   dependencies:
     "@fortawesome/fontawesome-common-types" "6.4.2"
 
 "@fortawesome/vue-fontawesome@^3.0.3":
   version "3.0.3"
-  resolved "https://registry.yarnpkg.com/@fortawesome/vue-fontawesome/-/vue-fontawesome-3.0.3.tgz#633e2998d11f7d4ed41f0d5ea461a22ec9b9d034"
+  resolved "https://registry.npmjs.org/@fortawesome/vue-fontawesome/-/vue-fontawesome-3.0.3.tgz"
   integrity sha512-KCPHi9QemVXGMrfuwf3nNnNo129resAIQWut9QTAMXmXqL2ErABC6ohd2yY5Ipq0CLWNbKHk8TMdTXL/Zf3ZhA==
+
+"@headlessui/vue@^1.7.16":
+  version "1.7.16"
+  resolved "https://registry.npmjs.org/@headlessui/vue/-/vue-1.7.16.tgz"
+  integrity sha512-nKT+nf/q6x198SsyK54mSszaQl/z+QxtASmgMEJtpxSX2Q0OPJX0upS/9daDyiECpeAsvjkoOrm2O/6PyBQ+Qg==
+
+"@heroicons/vue@^2.0.18":
+  version "2.0.18"
+  resolved "https://registry.npmjs.org/@heroicons/vue/-/vue-2.0.18.tgz"
+  integrity sha512-BcTC9nq2TkwNSfQuqo96J7ehx4etezypc2YeTq7KsXWxrcrerhkgjLrxGRBnStN0wrXo0Gv4BInybqz5uBG6Cw==
 
 "@humanwhocodes/config-array@^0.11.10":
   version "0.11.10"
@@ -285,6 +295,18 @@
   version "1.3.2"
   resolved "https://registry.npmjs.org/@rushstack/eslint-patch/-/eslint-patch-1.3.2.tgz"
   integrity sha512-V+MvGwaHH03hYhY+k6Ef/xKd6RYlc4q8WBx+2ANmipHJcKuktNcI/NgEsJgdSUF6Lw32njT6OnrRsKYCdgHjYw==
+
+"@tailwindcss/aspect-ratio@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@tailwindcss/aspect-ratio/-/aspect-ratio-0.4.2.tgz#9ffd52fee8e3c8b20623ff0dcb29e5c21fb0a9ba"
+  integrity sha512-8QPrypskfBa7QIMuKHg2TA7BqES6vhBrDLOv8Unb6FcFyd3TjKbc6lcmb9UPQHxfl24sXoJ41ux/H7qQQvfaSQ==
+
+"@tailwindcss/forms@^0.5.5":
+  version "0.5.5"
+  resolved "https://registry.npmjs.org/@tailwindcss/forms/-/forms-0.5.5.tgz"
+  integrity sha512-03sXK1DcPt44GZ0Yg6AcAfQln89IKdbE79g2OwoKqBm1ukaadLO2AH3EiB3mXHeQnxa3tzm7eE0x7INXSjbuug==
+  dependencies:
+    mini-svg-data-uri "^1.2.3"
 
 "@tsconfig/node18@^18.2.0":
   version "18.2.0"
@@ -1288,9 +1310,9 @@ fs.realpath@^1.0.0:
   integrity sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==
 
 fsevents@~2.3.2:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.2.tgz#8a526f78b8fdf4623b709e0b975c52c24c02fd1a"
-  integrity sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.3.tgz#cac6407785d03675a2a5e1a5305c697b347d90d6"
+  integrity sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==
 
 function-bind@^1.1.1:
   version "1.1.1"
@@ -1821,6 +1843,11 @@ mimic-fn@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npmjs.org/mimic-fn/-/mimic-fn-4.0.0.tgz"
   integrity sha512-vqiC06CuhBTUdZH+RYl8sFrL096vA45Ok5ISO6sE/Mr1jRbGH4Csnhi8f3wKVl7x8mO4Au7Ir9D3Oyv1VYMFJw==
+
+mini-svg-data-uri@^1.2.3:
+  version "1.4.4"
+  resolved "https://registry.npmjs.org/mini-svg-data-uri/-/mini-svg-data-uri-1.4.4.tgz"
+  integrity sha512-r9deDe9p5FJUPZAk3A59wGH7Ii9YrjjWw0jmw/liSbHl2CHiyXj6FcDXDu2K3TjVAXqiJdaw3xxwlZZr9E6nHg==
 
 minimatch@^3.0.4, minimatch@^3.0.5, minimatch@^3.1.1, minimatch@^3.1.2:
   version "3.1.2"
