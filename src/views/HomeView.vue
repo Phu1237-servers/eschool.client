@@ -5,7 +5,7 @@
     <main class="flex-1">
       <div class="py-6">
         <BoxContainer title="Continue Watch">
-          <div class="grid grid-cols-12 gap-4 h-96">
+          <div class="grid grid-cols-12 gap-4 h-96 lg:h-[500px]">
             <div class="col-span-9 h-full flex justify-center">
               <!-- <div class="h-full rounded-lg border-4 border-dashed border-gray-200" /> -->
               <video
