@@ -9,22 +9,38 @@
             <div class="flex-1 h-full">
               <video
                 class="h-full w-full bg-black"
-                src="https://public.bl.files.1drv.com/y4m43KTudinuu1WzZo55m9gZR2KMfBK6eeK8yS36anhFFj2P9giK1Dco29ZSxZaIlZ6_bwYbxZv16ylZiaZsYkJkf9CCZbZO3l4sS_mlxtE4G-Mln2gOfGxfU0JrYScOTII80huWo-qK0kJ4eRAJX8svBOvifx7Q5UNq8pKgHO6QTf1iWFHVTJbeiYmeKD3BRMa43YnmSdTt4J7D-TjjNuk4T3k1le7TQSSosSckXZNLKw"
+                :src="playingVideo.download_url"
                 controls="true"
-              />
+                crossorigin="anonymous"
+                @error="onError"
+              >
+                <track
+                  v-if="playingVideo.subtitle_url"
+                  :src="playingVideo.subtitle_url"
+                  kind="subtitles"
+                  srclang="en"
+                  label="English"
+                  default
+                />
+              </video>
             </div>
             <div class="flex-initial flex flex-col ml-2 border border-1 border-solid">
               <header class="p-1 text-base font-bold border-b-[1px] border-solid">Chapters</header>
               <div class="overflow-auto">
-                <section class="p-1 flex hover:bg-gray-200" v-for="index in 10" :key="index">
-                  <div class="thumbnail flex-initial">
-                    <img
-                      src="https://i.ytimg.com/vi/9xG5aPvrS-k/hqdefault.jpg?sqp=-oaymwEbCKgBEF5IVfKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLCQrZcF9LcgEyyAcXr3szhX_4gVog"
-                    />
+                <section
+                  :class="[
+                    'p-1 flex hover:bg-gray-200',
+                    { 'bg-gray-200': video.id === playingVideo.id }
+                  ]"
+                  v-for="(video, index) in videos"
+                  :key="index"
+                >
+                  <div class="thumbnail flex-initial max-w-[200px]">
+                    <img :src="video.thumbnail" />
                   </div>
                   <div class="information flex-1 mx-2">
-                    <div class="title">It's Not Like I Like You!! (♪♫)</div>
-                    <div class="duration">4:06</div>
+                    <div class="title">{{ video.name }}</div>
+                    <div class="duration">{{ convertTimeToDuration(video.duration) }}</div>
                   </div>
                 </section>
               </div>
@@ -35,7 +51,7 @@
           </div>
         </BoxContainer>
         <BoxContainer title="Other courses in related to the level of this course">
-          <GridList :data="products" />
+          <CourseGridList :data="relatedCourses" />
         </BoxContainer>
       </div>
     </main>
@@ -45,30 +61,58 @@
 <script setup lang="ts">
 import TheTopbar from '@/components/TheTopbar.vue'
 import BoxContainer from '@/components/Common/BoxContainer.vue'
-import GridList from '@/components/Common/GridList.vue'
-const products = [
-  {
-    id: 1,
-    name: 'Fusion',
-    category: 'UI Kit',
-    href: '#',
-    price: '$49',
-    imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-page-05-related-product-01.jpg',
-    imageAlt:
-      'Payment application dashboard screenshot with transaction table, financial highlights, and main clients on colorful purple background.'
-  },
-  {
-    id: 2,
-    name: 'Fusion',
-    category: 'UI Kit',
-    href: '#',
-    price: '1:00',
-    imageSrc:
-      'https://phx02pap003files.storage.live.com/y4mcJ-ZK8HXEKJKgCPVG4LjizG6-q_E1HTUPqM8b0dT4cRkTv75LTXGfgAsLxGP4K2vAKaYCsibZVHRmp572dXJxHxtkoyM7RA4UKQMPX5Z1BWMH02eXsa4rOfDNxDW5dDB8tNKX9TIOKWvbM1iYZRwn9fZiubkXe4hH_yTfflicUtK_IlrAh58DVUiT8_gIZEc57qyEhuCISZHHogJvFNPFw?width=800&height=450&cropmode=none',
-    imageAlt:
-      'Payment application dashboard screenshot with transaction table, financial highlights, and main clients on colorful purple background.'
-  }
+import CourseGridList from '@/components/Common/CourseGridList.vue'
+import { ref, onBeforeMount } from 'vue'
+import { type Course, defaultCourse } from '@/models/Course'
+import { type Video, defaultVideo } from '@/models/Video'
+import { useRoute, useRouter } from 'vue-router'
+const playingVideo = ref<Video>(defaultVideo)
+const course = ref<Course>(defaultCourse)
+const relatedCourses = ref<Array<Course>>([])
+const videos = ref<Array<Video>>([])
+const route = useRoute()
+const router = useRouter()
 
-  // More products...
-]
+onBeforeMount(async () => {
+  fetch(import.meta.env.VITE_API_ENDPOINT + '/courses/' + route.params.id).then((res) => {
+    res
+      .json()
+      .then((response) => {
+        let data = response
+        course.value = data.data
+        videos.value = data.data.videos
+        playingVideo.value = data.data.videos[0]
+        relatedCourses.value = data.data.related_courses
+      })
+      .catch((error) => {
+        console.log(error)
+        router.push({ name: 'home' })
+      })
+  })
+})
+
+function convertTimeToDuration(seconds: number) {
+  return [parseInt(String((seconds / 60) % 60), 10), parseInt(String(seconds % 60), 10)]
+    .join(':')
+    .replace(/\b(\d)\b/g, '0$1')
+}
+// Methods
+function onError() {
+  fetch(import.meta.env.VITE_API_ENDPOINT + '/courses/' + route.params.id, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      _method: 'PUT'
+    })
+  }).then((res) => {
+    res.json().then((response) => {
+      let data = response
+      course.value = data.data
+      videos.value = data.data.videos
+      playingVideo.value = data.data.videos[0]
+    })
+  })
+}
 </script>
