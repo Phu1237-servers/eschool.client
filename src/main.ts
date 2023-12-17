@@ -13,4 +13,4 @@ app.use(router)
 app.use(plugins)
 
 
-app.mount('#app')
+app.mount('body')
