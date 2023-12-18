@@ -1,4 +1,5 @@
 import { type Category } from "./Category";
+import type { Video } from "./Video";
 
 export interface Course {
   id: number;
@@ -10,6 +11,7 @@ export interface Course {
   cloud_path?: string;
   category_id: number;
   category?: Category;
+  videos?: Array<Video>;
   created_at: string;
   updated_at: string;
 }

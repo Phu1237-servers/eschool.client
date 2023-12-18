@@ -17,6 +17,16 @@ const router = createRouter({
         footer: TheFooter,
       }
     },
+    {
+      path: '/login',
+      name: 'login',
+      components: {
+        default: HomeView,
+        layout: TheHeader,
+        header: TheHeader,
+        footer: TheFooter,
+      }
+    },
 		{
 			path: '/courses/:id',
 			name: 'courses.show',

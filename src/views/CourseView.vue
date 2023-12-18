@@ -21,13 +21,13 @@
           <div class="mt-4 sm:mt-8 md:mt-10 lg:mt-10 md:pt-4 flex-no-shrink">
             <ul class="list-reset flex flex-wrap">
               <li class="mr-4">
-                <a
-                  href="https://vueschool.io/lessons/what-do-i-need-to-take-the-vue-3-masterclass"
+                <router-link
+                  :to="{ name: 'lessons.show', params: { id: course.id } }"
                   :title="'Go to the first lesson: ' + (videos.length ? videos[0].name : '')"
                   class="btn flex btn-green-gradient"
                   ><i class="fas fa-graduation-cap"></i>
                   Start Course
-                </a>
+                </router-link>
               </li>
               <li>
                 <div data-v-4fdc60af="">
@@ -114,27 +114,34 @@
                   <div class="lesson group" v-for="(video, index) in videos" :key="index">
                     <div class="flex items-center">
                       <div class="mx-2" style="font-size: 0.7rem">
-                        <a
-                          href="https://vueschool.io/lessons/what-do-i-need-to-take-the-vue-3-masterclass"
+                        <router-link
+                          :to="{ name: 'lessons.show', params: { id: course.id } }"
                           :title="'Watch Lesson: ' + video.name"
                           class="icon"
                           ><span class="fa-stack text-green"
                             ><i class="far fa-circle fa-stack-2x opacity-50"></i>
                             <i class="fas fa-play fa-stack-1x" style="left: 1px"></i></span
-                        ></a>
+                        ></router-link>
                       </div>
-                      <a
-                        href="https://vueschool.io/lessons/what-do-i-need-to-take-the-vue-3-masterclass"
+                      <router-link
+                        :to="{
+                          name: 'lessons.show',
+                          params: { id: course.id },
+                          query: { chapter: video.id }
+                        }"
                         :title="video.name"
                         class="title"
-                        >{{ video.name }}</a
                       >
+                        {{ video.name }}
+                      </router-link>
                       <span
                         class="mx-4 text-green text-xs font-medium rounded border-2 px-1 border-green"
                         >FREE</span
                       >
                     </div>
-                    <div><span class="time">2:39</span></div>
+                    <div>
+                      <span class="time">{{ convertTimeToDuration(video.duration) }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -148,19 +155,14 @@
 </template>
 
 <script setup lang="ts">
-import TheTopbar from '@/components/TheTopbar.vue'
-import BoxContainer from '@/components/Common/BoxContainer.vue'
-import CourseGridList from '@/components/Common/CourseGridList.vue'
 import { ref, onBeforeMount } from 'vue'
 import { type Course, defaultCourse } from '@/models/Course'
 import { type Video, defaultVideo } from '@/models/Video'
 import { useRoute, useRouter } from 'vue-router'
 const playingVideo = ref<Video>(defaultVideo)
 const course = ref<Course>(defaultCourse)
-const relatedCourses = ref<Array<Course>>([])
 const videos = ref<Array<Video>>([])
 const route = useRoute()
-const router = useRouter()
 
 onBeforeMount(async () => {
   fetch(import.meta.env.VITE_API_ENDPOINT + '/courses/' + route.params.id).then((res) => {
