@@ -1,14 +1,20 @@
 <template>
   <div class="relative">
     <div class="absolute left-1/2 -ml-160 mt-56 hidden xl:block">
-      <img src="/images/sections/learning-paths/illustration-tech-boxes-1.svg" alt="Tech" />
+      <img
+        src="https://vueschool.io/images/sections/learning-paths/illustration-tech-boxes-1.svg"
+        alt="Tech"
+      />
     </div>
     <div class="absolute left-1/2 bottom-0 ml-144 mb-4 hidden xl:block">
-      <img src="/images/sections/learning-paths/illustration-tech-boxes-2.svg" alt="Tech" />
+      <img
+        src="https://vueschool.io/images/sections/learning-paths/illustration-tech-boxes-2.svg"
+        alt="Tech"
+      />
     </div>
     <div class="absolute left-1/2 bottom-0 ml-84 mb-40 hidden xl:block">
       <img
-        src="/images/sections/learning-paths/illustration-girl.svg"
+        src="https://vueschool.io/images/sections/learning-paths/illustration-girl.svg"
         alt="Illustration of a girl"
       />
     </div>
@@ -259,3 +265,8 @@
 </template>
 
 <script setup lang="ts"></script>
+
+<style lang="scss" scoped>
+@import '../assets/css/learning-paths.css';
+// @import './assets/main.scss';
+</style>

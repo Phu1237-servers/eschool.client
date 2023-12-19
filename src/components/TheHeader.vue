@@ -13,7 +13,9 @@
           </div>
           <div id="menu" class="vs-bar-menu">
             <button class="vs-bar-close-menu">×</button>
-            <a href="/learning-paths" class="vs-bar-item"> Learning Paths </a>
+            <router-link :to="{ name: 'learning-paths' }" class="vs-bar-item">
+              Learning Paths
+            </router-link>
             <hr class="vs-bar-divider" />
             <button title="Toogle Search" class="vs-bar-search-button pl-3">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">

@@ -115,14 +115,14 @@
                   >Master Class</a
                 >
               </li>
-              <l class="p-1">
+              <li class="p-1">
                 <a
                   href="https://vueschool.io/affiliates"
                   title="Vue School Affiliate Program"
                   target="_blank"
                   >Affiliate Program</a
                 >
-              </l>
+              </li>
               <li class="p-1">
                 <a href="#top" title="Go to the top of the page">Top</a>
               </li>
