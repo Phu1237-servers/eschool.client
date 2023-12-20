@@ -11,61 +11,65 @@
         </router-link>
       </h2>
       <div class="video-player-wrapper">
-        <div data-v-85a86954="" class="bg-indigo-dark">
-          <div data-v-85a86954="" class="vimeo-player" data-vimeo-initialized="true">
-            <div style="padding: 56.25% 0 0 0; position: relative">
-              <VideoPlayerVue :video="playingVideo" />
-            </div>
+        <div class="bg-indigo-dark">
+          <div class="vimeo-player">
+            <video
+              v-if="playingVideo.download_url !== ''"
+              :src="playingVideo.download_url"
+              style="width: 100%; height: 100%"
+              :muted="true"
+              :controls="true"
+              :loop="true"
+              :playsinline="true"
+              ref="player"
+              crossorigin="anonymous"
+              @error="onError"
+            />
           </div>
-          <div data-v-85a86954="" class="video-controls">
-            <ul data-v-85a86954="">
-              <li data-v-85a86954="" class="disabled">
-                <i data-v-85a86954="" class="fas fa-angle-left"></i>
-                <span data-v-85a86954="" class="label">Previous</span>
+          <div class="video-controls">
+            <ul>
+              <li class="disabled">
+                <i class="fas fa-angle-left"></i>
+                <span class="label">Previous</span>
               </li>
-              <li data-v-85a86954="">
-                <i data-v-85a86954="" class="fas fa-angle-double-left"></i>
-                <span data-v-85a86954="" class="label">-10s</span>
+              <li>
+                <i class="fas fa-angle-double-left"></i>
+                <span class="label">-10s</span>
               </li>
             </ul>
-            <ul data-v-85a86954="">
-              <li data-v-85a86954="" class="speed relative">
-                <span data-v-85a86954="" class="text-center flex items-center"
-                  ><i data-v-85a86954="" class="fas fa-tachometer"></i>
-                  <br data-v-85a86954="" class="mobile-only" /><span data-v-85a86954=""
-                    >1x</span
-                  ></span
+            <ul>
+              <li class="speed relative">
+                <span class="text-center flex items-center"
+                  ><i class="fas fa-tachometer"></i> <br class="mobile-only" /><span>1x</span></span
                 >
-                <ul data-v-85a86954="" class="dropdown">
-                  <li data-v-85a86954="">0.75</li>
-                  <li data-v-85a86954="">0.85</li>
-                  <li data-v-85a86954="">1.00</li>
-                  <li data-v-85a86954="">1.25</li>
-                  <li data-v-85a86954="">1.50</li>
-                  <li data-v-85a86954="">1.75</li>
-                  <li data-v-85a86954="">2.00</li>
+                <ul class="dropdown">
+                  <li>0.75</li>
+                  <li>0.85</li>
+                  <li>1.00</li>
+                  <li>1.25</li>
+                  <li>1.50</li>
+                  <li>1.75</li>
+                  <li>2.00</li>
                 </ul>
               </li>
-              <li data-v-85a86954="">
-                <label data-v-85a86954="" class="flex items-center"
-                  ><div data-v-85a86954="" class="fas switch">
-                    <input data-v-85a86954="" type="checkbox" id="autoplay" />
-                    <span data-v-85a86954="" class="slider round"></span>
+              <li>
+                <label class="flex items-center"
+                  ><div class="fas switch">
+                    <input type="checkbox" id="autoplay" />
+                    <span class="slider round"></span>
                   </div>
-                  <div data-v-85a86954="" for="autoplay" class="leading-normal">
-                    Auto Play
-                  </div></label
+                  <div for="autoplay" class="leading-normal">Auto Play</div></label
                 >
               </li>
             </ul>
-            <ul data-v-85a86954="" class="right">
-              <li data-v-85a86954="">
-                <span data-v-85a86954="" class="label">+10s</span>
-                <i data-v-85a86954="" class="fas fa-angle-double-right"></i>
+            <ul class="right">
+              <li>
+                <span class="label">+10s</span>
+                <i class="fas fa-angle-double-right"></i>
               </li>
-              <li data-v-85a86954="" class="">
-                <span data-v-85a86954="" class="label">Next</span>
-                <i data-v-85a86954="" class="fas fa-angle-right"></i>
+              <li class="">
+                <span class="label">Next</span>
+                <i class="fas fa-angle-right"></i>
               </li>
             </ul>
           </div>
@@ -114,7 +118,7 @@
                 </div>
                 <div class="px-4 md:px-8">
                   <div class="mt-1 flex items-center justify-between">
-                    <h3 class="text-xl">Getting Started with Vue.js and the Composition API</h3>
+                    <h3 class="text-xl">{{ course.name }}</h3>
                     <span class="hidden md:inline-block text-sm">
                       {{ course.videos?.length }} lessons
                     </span>
@@ -150,25 +154,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeMount } from 'vue'
+import { ref, onBeforeMount, reactive, computed } from 'vue'
 import { type Course, defaultCourse } from '@/models/Course'
 import { type Video, defaultVideo } from '@/models/Video'
 import { useRoute, useRouter } from 'vue-router'
-const playingVideo = ref<Video>(defaultVideo)
+import { clone, debounce } from 'lodash'
+import VideoPlayer from '@/components/VideoPlayer/VideoPlayer.vue'
 const course = ref<Course>(defaultCourse)
 const videos = ref<Array<Video>>([])
+const playingVideo = ref<Video>(defaultVideo)
 const route = useRoute()
 
+const courseId = computed(() => {
+  return route.params.id
+})
+
 onBeforeMount(async () => {
-  fetch(import.meta.env.VITE_API_ENDPOINT + '/courses/' + route.params.id).then((res) => {
+  fetch(import.meta.env.VITE_API_ENDPOINT + '/courses/' + courseId.value).then((res) => {
     res
       .json()
       .then((response) => {
         let data = response
         course.value = data.data
         videos.value = data.data.videos
-        // playingVideo.value = data.data.videos[0]
-        // relatedCourses.value = data.data.related_courses
+        playingVideo.value = data.data.videos[0]
       })
       .catch((error) => {
         console.log(error)
@@ -176,4 +185,30 @@ onBeforeMount(async () => {
       })
   })
 })
+function onError() {
+  console.log('error', clone(playingVideo))
+  debounce(() => {
+    console.log('error1')
+
+    fetch(import.meta.env.VITE_API_ENDPOINT + '/courses/' + courseId.value, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((res) => {
+      res
+        .json()
+        .then((response) => {
+          let data = response
+          course.value = data.data
+          videos.value = data.data.videos
+          playingVideo.value = data.data.videos[0]
+        })
+        .catch((error) => {
+          console.log(error)
+          // router.push({ name: 'home' })
+        })
+    })
+  }, 1000)
+}
 </script>
