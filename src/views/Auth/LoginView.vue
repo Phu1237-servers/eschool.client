@@ -79,30 +79,35 @@ function login() {
       email: email.value,
       password: password.value
     })
-  }).then((res) => {
-    res
-      .json()
-      .then((response) => {
-        let data = response
-        localStorage.setItem('token', data.token)
-        http(import.meta.env.VITE_API_ENDPOINT + '/user', {
-          method: 'GET'
-        }).then((res) => {
-          res
-            .json()
-            .then((response) => {
-              let data = response
-            })
-            .catch((error) => {
-              console.log(error)
-              // router.push({ name: 'home' })
-            })
-        })
-      })
-      .catch((error) => {
-        console.log(error)
-        // router.push({ name: 'home' })
-      })
   })
+    .then((res) => {
+      res
+        .json()
+        .then((response) => {
+          let data = response
+          localStorage.setItem('token', data.token)
+          http(import.meta.env.VITE_API_ENDPOINT + '/user', {
+            method: 'GET'
+          }).then((res) => {
+            res
+              .json()
+              .then((response) => {
+                let data = response
+              })
+              .catch((error) => {
+                console.log(error)
+                // router.push({ name: 'home' })
+              })
+          })
+        })
+        .catch((error) => {
+          console.log(error)
+          // router.push({ name: 'home' })
+        })
+    })
+    .catch((error) => {
+      console.log(error)
+      // router.push({ name: 'home' })
+    })
 }
 </script>

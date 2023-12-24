@@ -10,6 +10,20 @@ export default function (resource: RequestInfo | URL, options: HttpOptions = {})
   if (localStorage.getItem('token')) {
     headers['Authorization'] = 'Bearer ' + localStorage.getItem('token')
   }
-  return fetch(resource, lodash.merge(options, { headers }))
-
+  return new Promise((resolve, reject) => {
+    fetch(resource, lodash.merge({
+      headers,
+    }, options))
+      .then(async (response) => {
+        const data = await response.json()
+        if (response.ok) {
+          resolve(data)
+        } else {
+          reject(data)
+        }
+      })
+      .catch((error) => {
+        reject(error)
+      })
+  })
 }
