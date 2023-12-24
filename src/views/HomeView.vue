@@ -46,7 +46,6 @@
                       </div>
                       <div>
                         <div
-                          data-test="Intermediate"
                           class="py-1 px-2 uppercase difficulty-label text-xs rounded-sm inline-flex items-center"
                         >
                           <span class="difficulty difficulty-intermediate"></span>
@@ -82,8 +81,11 @@ const route = useRoute()
 const courses = ref<Array<Course>>([])
 const videos = ref<Array<Video>>([])
 import Badge from '@/components/Common/Badge.vue'
+import http from '@/plugins/http'
 onBeforeMount(async () => {
-  fetch(import.meta.env.VITE_API_ENDPOINT + '/courses').then((res) => {
+  console.log('haha')
+
+  http(import.meta.env.VITE_API_ENDPOINT + '/courses').then((res) => {
     res
       .json()
       .then((response) => {

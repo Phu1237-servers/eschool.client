@@ -10,21 +10,24 @@
           {{ course.name }}
         </router-link>
       </h2>
-      <div class="video-player-wrapper">
+      <div class="video-player-wrapper" ref="videoPlayerWrapper">
         <div class="bg-indigo-dark">
           <div class="vimeo-player">
-            <video
-              v-if="playingVideo.download_url !== ''"
-              :src="playingVideo.download_url"
-              style="width: 100%; height: 100%"
-              :muted="true"
-              :controls="true"
-              :loop="true"
-              :playsinline="true"
-              ref="player"
-              crossorigin="anonymous"
-              @error="onError"
-            />
+            <template v-for="(video, index) in videos" :key="index">
+              <video
+                v-if="playingVideo.download_url === video.download_url"
+                :src="playingVideo.download_url"
+                style="width: 100%; height: 100%"
+                :muted="true"
+                :controls="true"
+                :loop="true"
+                :playsinline="true"
+                ref="player"
+                crossorigin="anonymous"
+                @timeupdate="timeupdate"
+                @error="onError"
+              />
+            </template>
           </div>
           <div class="video-controls">
             <ul>
@@ -124,25 +127,37 @@
                     </span>
                   </div>
                   <div class="lessons mt-6">
-                    <div class="lesson leading-tight watching-lesson watched">
-                      <div class="flex">
-                        <div class="flex justify-center items-center" style="width: 25px">
-                          <i class="fas fa-play text-green"></i>
+                    <template v-for="(video, index) in videos" :key="index">
+                      <div
+                        :class="[
+                          'lesson leading-tight',
+                          playingVideo.id === video.id ? 'watching-lesson' : ''
+                          // 'watched'
+                        ]"
+                      >
+                        <div class="flex">
+                          <div class="flex justify-center items-center" style="width: 25px">
+                            <i class="fas fa-play text-green"></i>
+                          </div>
+                          <span>
+                            <a
+                              href="javascript:;"
+                              :title="'Go to Vue.js lesson: ' + video.name"
+                              @click="
+                                () => {
+                                  changeVideo(video)
+                                }
+                              "
+                            >
+                              {{ video.name }}
+                            </a>
+                          </span>
+                          <div class="flex items-center"></div>
                         </div>
-                        <span>
-                          <a
-                            href="/lessons/getting-started-with-vue-js-and-the-composition-api"
-                            title="Go to Vue.js lesson: Getting Started with Vue.js and the Composition API"
-                          >
-                            Getting Started with Vue.js and the Composition API
-                          </a>
-                        </span>
-                        <div class="flex items-center"><!----></div>
+                        <span>3:58</span>
                       </div>
-                      <span>3:58</span>
-                    </div>
+                    </template>
                   </div>
-                  <!---->
                 </div>
               </div>
             </div>
@@ -158,19 +173,21 @@ import { ref, onBeforeMount, reactive, computed } from 'vue'
 import { type Course, defaultCourse } from '@/models/Course'
 import { type Video, defaultVideo } from '@/models/Video'
 import { useRoute, useRouter } from 'vue-router'
-import { clone, debounce } from 'lodash'
+import { debounce } from 'lodash'
 import VideoPlayer from '@/components/VideoPlayer/VideoPlayer.vue'
+import http from '@/plugins/http'
 const course = ref<Course>(defaultCourse)
 const videos = ref<Array<Video>>([])
 const playingVideo = ref<Video>(defaultVideo)
 const route = useRoute()
+import dayjs from 'dayjs'
 
 const courseId = computed(() => {
   return route.params.id
 })
 
 onBeforeMount(async () => {
-  fetch(import.meta.env.VITE_API_ENDPOINT + '/courses/' + courseId.value).then((res) => {
+  http(import.meta.env.VITE_API_ENDPOINT + '/courses/' + courseId.value).then((res) => {
     res
       .json()
       .then((response) => {
@@ -181,34 +198,62 @@ onBeforeMount(async () => {
       })
       .catch((error) => {
         console.log(error)
-        // router.push({ name: 'home' })
       })
   })
 })
 function onError() {
-  console.log('error', clone(playingVideo))
-  debounce(() => {
-    console.log('error1')
+  console.log('error')
 
-    fetch(import.meta.env.VITE_API_ENDPOINT + '/courses/' + courseId.value, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then((res) => {
-      res
-        .json()
-        .then((response) => {
-          let data = response
-          course.value = data.data
-          videos.value = data.data.videos
-          playingVideo.value = data.data.videos[0]
-        })
-        .catch((error) => {
-          console.log(error)
-          // router.push({ name: 'home' })
-        })
-    })
-  }, 1000)
+  http(import.meta.env.VITE_API_ENDPOINT + '/courses/' + courseId.value, {
+    method: 'PUT'
+  }).then((res) => {
+    res
+      .json()
+      .then((response) => {
+        let data = response
+        course.value = data.data
+        videos.value = data.data.videos
+        playingVideo.value = data.data.videos[0]
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  })
+}
+function changeVideo(video: Video) {
+  if (playingVideo.value.id === video.id) {
+    return
+  }
+  playingVideo.value = video
+  finalWaitingTime = 0
+  console.log(this.$refs)
+
+  this.$refs.videoPlayerWrapper.$el.scrollIntoView({
+    behavior: 'smooth'
+  })
+}
+const waitingTime = 5000
+let isUpdatingProgress = false
+let finalWaitingTime = 0
+function timeupdate() {
+  let now = dayjs().valueOf()
+  if (finalWaitingTime === 0) {
+    finalWaitingTime = dayjs().add(waitingTime, 'ms').valueOf()
+  }
+  if (finalWaitingTime <= now) {
+    updateProgress()
+  }
+}
+function updateProgress() {
+  if (isUpdatingProgress) {
+    return
+  }
+  isUpdatingProgress = true
+  http(import.meta.env.VITE_API_ENDPOINT + '/courses-progress/' + courseId.value, {
+    method: 'PUT'
+  }).then((res) => {
+    isUpdatingProgress = false
+    finalWaitingTime = dayjs().add(waitingTime, 'ms').valueOf()
+  })
 }
 </script>

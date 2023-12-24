@@ -47,25 +47,28 @@ const router = createRouter({
         footer: TheFooter,
       }
     },
-		{
-			path: '/courses/:id',
-			name: 'courses.show',
-			components: {
+    {
+      path: '/courses/:id',
+      name: 'courses.show',
+      components: {
         default: CourseView,
         header: TheHeader,
         footer: TheFooter,
       }
-		},
-		{
-			path: '/lessons/:id',
-			name: 'lessons.show',
-			components: {
+    },
+    {
+      path: '/lessons/:id',
+      name: 'lessons.show',
+      components: {
         default: LessonsView,
         header: TheHeader,
         footer: TheFooter,
       }
-		},
-  ]
+    },
+  ],
+  scrollBehavior() {
+    return { left: 0, top: 0, behavior: "smooth" };
+  }
 })
 
 export default router

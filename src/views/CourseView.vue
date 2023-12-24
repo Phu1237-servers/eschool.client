@@ -30,16 +30,15 @@
                 </router-link>
               </li>
               <li>
-                <div data-v-4fdc60af="">
+                <div>
                   <a
-                    data-v-4fdc60af=""
                     href="#"
                     title="Follow The Vue.js 3 Masterclass"
                     class="btn shadow-none text-white"
-                    ><i data-v-4fdc60af="" class="far fa-star"></i>
+                    ><i class="far fa-star"></i>
                     Follow
                   </a>
-                  <p data-v-4fdc60af="" class="text-sm text-grey" style="display: none">
+                  <p class="text-sm text-grey" style="display: none">
                     You will receive a notification to your email when a new lesson is published.
                   </p>
                 </div>
@@ -159,21 +158,19 @@ import { ref, onBeforeMount } from 'vue'
 import { type Course, defaultCourse } from '@/models/Course'
 import { type Video, defaultVideo } from '@/models/Video'
 import { useRoute, useRouter } from 'vue-router'
-const playingVideo = ref<Video>(defaultVideo)
+import http from '@/plugins/http'
 const course = ref<Course>(defaultCourse)
 const videos = ref<Array<Video>>([])
 const route = useRoute()
 
 onBeforeMount(async () => {
-  fetch(import.meta.env.VITE_API_ENDPOINT + '/courses/' + route.params.id).then((res) => {
+  http(import.meta.env.VITE_API_ENDPOINT + '/courses/' + route.params.id).then((res) => {
     res
       .json()
       .then((response) => {
         let data = response
         course.value = data.data
         videos.value = data.data.videos
-        // playingVideo.value = data.data.videos[0]
-        // relatedCourses.value = data.data.related_courses
       })
       .catch((error) => {
         console.log(error)
@@ -186,24 +183,5 @@ function convertTimeToDuration(seconds: number) {
   return [parseInt(String((seconds / 60) % 60), 10), parseInt(String(seconds % 60), 10)]
     .join(':')
     .replace(/\b(\d)\b/g, '0$1')
-}
-// Methods
-function onError() {
-  fetch(import.meta.env.VITE_API_ENDPOINT + '/courses/' + route.params.id, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      _method: 'PUT'
-    })
-  }).then((res) => {
-    res.json().then((response) => {
-      let data = response
-      course.value = data.data
-      videos.value = data.data.videos
-      playingVideo.value = data.data.videos[0]
-    })
-  })
 }
 </script>
