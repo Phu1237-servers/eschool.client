@@ -1,35 +1,18 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
-	faUserSecret,
-	faBars,
-	faPlay,
-	faPause,
-	faForwardStep,
-	faVolumeXmark,
-	faVolumeLow,
-	faVolumeHigh,
-  faClosedCaptioning,
-	faGear,
-	faExpand,
+  faBookOpen,
+  faPlay,
+  faCircle
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faWindowRestore
 } from '@fortawesome/free-regular-svg-icons'
 
 library.add(
-	faUserSecret,
-	faBars,
-	faPlay,
-	faPause,
-	faForwardStep,
-	faVolumeXmark,
-	faVolumeLow,
-	faVolumeHigh,
-	faClosedCaptioning,
-	faGear,
-	faExpand,
-  faWindowRestore,
+  faBookOpen,
+  faPlay,
+  faCircle,
 )
 
 export default FontAwesomeIcon

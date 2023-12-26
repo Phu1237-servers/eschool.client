@@ -7,6 +7,7 @@ import LessonsView from '../views/LessonView.vue'
 import LoginView from '@/views/Auth/LoginView.vue'
 import RegisterView from '@/views/Auth/RegisterView.vue'
 import LearningPathsView from '@/views/LearningPathsView.vue'
+import { useUserStore } from '@/stores/user'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +28,9 @@ const router = createRouter({
         default: LoginView,
         header: TheHeader,
         footer: TheFooter,
+      },
+      meta: {
+        guest: true
       }
     },
     {
@@ -36,6 +40,9 @@ const router = createRouter({
         default: RegisterView,
         header: TheHeader,
         footer: TheFooter,
+      },
+      meta: {
+        guest: true
       }
     },
     {
@@ -69,6 +76,26 @@ const router = createRouter({
   scrollBehavior() {
     return { left: 0, top: 0, behavior: "smooth" };
   }
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.guest) {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      return next('/');
+    }
+  }
+  const token = localStorage.getItem('token');
+  const { fetchUser, isLoggedIn } = useUserStore();
+  if (token) {
+    if (!isLoggedIn()) {
+      fetchUser().then(() => {
+        return next();
+      });
+    }
+  }
+  next();
 })
 
 export default router

@@ -68,9 +68,19 @@
 
 <script setup lang="ts">
 import http from '@/plugins/http'
-import { ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
+import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
 const email = ref<String>('')
 const password = ref<String>('')
+const user = useUserStore()
+const router = useRouter()
+
+onBeforeMount(() => {
+  if (user.isLoggedIn()) {
+    router.push({ name: 'home' })
+  }
+})
 
 function login() {
   http(import.meta.env.VITE_API_ENDPOINT + '/login', {
@@ -86,18 +96,8 @@ function login() {
         .then((response) => {
           let data = response
           localStorage.setItem('token', data.token)
-          http(import.meta.env.VITE_API_ENDPOINT + '/user', {
-            method: 'GET'
-          }).then((res) => {
-            res
-              .json()
-              .then((response) => {
-                let data = response
-              })
-              .catch((error) => {
-                console.log(error)
-                // router.push({ name: 'home' })
-              })
+          user.fetchUser().then(() => {
+            router.push({ name: 'home' })
           })
         })
         .catch((error) => {

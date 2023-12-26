@@ -226,8 +226,6 @@ function changeVideo(video: Video) {
   }
   playingVideo.value = video
   finalWaitingTime = 0
-  console.log(this.$refs)
-
   this.$refs.videoPlayerWrapper.$el.scrollIntoView({
     behavior: 'smooth'
   })

@@ -83,15 +83,12 @@ const videos = ref<Array<Video>>([])
 import Badge from '@/components/Common/Badge.vue'
 import http from '@/plugins/http'
 onBeforeMount(async () => {
-  console.log('haha')
-
   http(import.meta.env.VITE_API_ENDPOINT + '/courses').then((res) => {
     res
       .json()
       .then((response) => {
         let data = response.data
-        courses.value = data.data
-        videos.value = data.data.videos
+        courses.value = data
       })
       .catch((error) => {
         console.log(error)

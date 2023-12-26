@@ -1,21 +1,22 @@
 import type HttpOptions from "@/types/HttpOptions"
-import lodash from 'lodash'
+import { merge } from 'lodash'
 
-export default function (resource: RequestInfo | URL, options: HttpOptions = {}) {
+export default function (resource: RequestInfo | URL, options: HttpOptions = {}): Promise<Response> {
   let headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'Authorization': '',
   }
   if (localStorage.getItem('token')) {
-    headers['Authorization'] = 'Bearer ' + localStorage.getItem('token')
+    headers = merge(headers, {
+      'Authorization': 'Bearer ' + localStorage.getItem('token')
+    })
   }
   return new Promise((resolve, reject) => {
-    fetch(resource, lodash.merge({
+    fetch(resource, merge({
       headers,
     }, options))
       .then(async (response) => {
-        const data = await response.json()
+        const data = await response
         if (response.ok) {
           resolve(data)
         } else {

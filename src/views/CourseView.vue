@@ -31,10 +31,7 @@
               </li>
               <li>
                 <div>
-                  <a
-                    href="#"
-                    title="Follow The Vue.js 3 Masterclass"
-                    class="btn shadow-none text-white"
+                  <a href="#" :title="'Follow ' + course.name" class="btn shadow-none text-white"
                     ><i class="far fa-star"></i>
                     Follow
                   </a>
@@ -87,7 +84,9 @@
                       <div
                         class="h-8 w-8 lg:h-10 lg:w-10 mr-4 bg-white rounded-full md:text-lg font-medium flex items-center justify-center circle-0/4"
                       >
-                        <span></span>
+                        <span>
+                          <font-awesome-icon :icon="['fas', 'book-open']" />
+                        </span>
                       </div>
                     </div>
                     <h2
@@ -117,10 +116,11 @@
                           :to="{ name: 'lessons.show', params: { id: course.id } }"
                           :title="'Watch Lesson: ' + video.name"
                           class="icon"
-                          ><span class="fa-stack text-green"
-                            ><i class="far fa-circle fa-stack-2x opacity-50"></i>
-                            <i class="fas fa-play fa-stack-1x" style="left: 1px"></i></span
-                        ></router-link>
+                        >
+                          <span class="fa-stack text-green rounded-full border-8">
+                            <font-awesome-icon :icon="['fas', 'play']" class="fa-stack-1x" />
+                          </span>
+                        </router-link>
                       </div>
                       <router-link
                         :to="{
@@ -133,10 +133,10 @@
                       >
                         {{ video.name }}
                       </router-link>
-                      <span
+                      <!-- <span
                         class="mx-4 text-green text-xs font-medium rounded border-2 px-1 border-green"
                         >FREE</span
-                      >
+                      > -->
                     </div>
                     <div>
                       <span class="time">{{ convertTimeToDuration(video.duration) }}</span>
@@ -159,6 +159,7 @@ import { type Course, defaultCourse } from '@/models/Course'
 import { type Video, defaultVideo } from '@/models/Video'
 import { useRoute, useRouter } from 'vue-router'
 import http from '@/plugins/http'
+import type { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 const course = ref<Course>(defaultCourse)
 const videos = ref<Array<Video>>([])
 const route = useRoute()
