@@ -24,6 +24,7 @@
                 :playsinline="true"
                 ref="player"
                 crossorigin="anonymous"
+                @loadeddata="loaded"
                 @timeupdate="timeupdate"
                 @error="onError"
               />
@@ -169,18 +170,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeMount, reactive, computed } from 'vue'
+import { ref, onBeforeMount, computed } from 'vue'
 import { type Course, defaultCourse } from '@/models/Course'
 import { type Video, defaultVideo } from '@/models/Video'
-import { useRoute, useRouter } from 'vue-router'
-import { debounce } from 'lodash'
-import VideoPlayer from '@/components/VideoPlayer/VideoPlayer.vue'
+import { useRoute } from 'vue-router'
 import http from '@/plugins/http'
 const course = ref<Course>(defaultCourse)
 const videos = ref<Array<Video>>([])
 const playingVideo = ref<Video>(defaultVideo)
 const route = useRoute()
 import dayjs from 'dayjs'
+import { useUserStore } from '@/stores/user'
+const { isLoggedIn } = useUserStore()
 
 const courseId = computed(() => {
   return route.params.id
@@ -213,7 +214,9 @@ function onError() {
         let data = response
         course.value = data.data
         videos.value = data.data.videos
-        playingVideo.value = data.data.videos[0]
+        playingVideo.value = data.data.videos.find((video: Video) => {
+          return video.id === course.value.current_watching_video
+        })
       })
       .catch((error) => {
         console.log(error)
@@ -226,32 +229,43 @@ function changeVideo(video: Video) {
   }
   playingVideo.value = video
   finalWaitingTime = 0
-  this.$refs.videoPlayerWrapper.$el.scrollIntoView({
-    behavior: 'smooth'
-  })
+  // this.$refs.videoPlayerWrapper.$el.scrollIntoView({
+  //   behavior: 'smooth'
+  // })
 }
 const waitingTime = 5000
 let isUpdatingProgress = false
 let finalWaitingTime = 0
-function timeupdate() {
+function loaded(e) {
+  e.target.currentTime = playingVideo.value.current_progress
+}
+function timeupdate(e) {
+  console.log('timeupdate', e.target.currentTime)
+
   let now = dayjs().valueOf()
   if (finalWaitingTime === 0) {
     finalWaitingTime = dayjs().add(waitingTime, 'ms').valueOf()
   }
   if (finalWaitingTime <= now) {
-    updateProgress()
+    updateProgress(e.target.currentTime)
   }
 }
-function updateProgress() {
+function updateProgress(currentTime: number) {
   if (isUpdatingProgress) {
     return
   }
   isUpdatingProgress = true
-  http(import.meta.env.VITE_API_ENDPOINT + '/courses-progress/' + courseId.value, {
-    method: 'PUT'
-  }).then((res) => {
-    isUpdatingProgress = false
-    finalWaitingTime = dayjs().add(waitingTime, 'ms').valueOf()
-  })
+  if (isLoggedIn()) {
+    http(import.meta.env.VITE_API_ENDPOINT + '/courses-progress/' + courseId.value, {
+      method: 'PUT',
+      body: JSON.stringify({
+        course_video_id: playingVideo.value.id,
+        progress: currentTime
+      })
+    }).finally(() => {
+      isUpdatingProgress = false
+      finalWaitingTime = dayjs().add(waitingTime, 'ms').valueOf()
+    })
+  }
 }
 </script>

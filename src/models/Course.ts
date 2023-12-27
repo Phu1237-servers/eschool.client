@@ -14,6 +14,7 @@ export interface Course {
   videos?: Array<Video>;
   created_at: string;
   updated_at: string;
+  current_watching_video: number,
 }
 
 export const defaultCourse: Course = {
@@ -25,4 +26,5 @@ export const defaultCourse: Course = {
   category_id: 0,
   created_at: "",
   updated_at: "",
+  current_watching_video: 0,
 };

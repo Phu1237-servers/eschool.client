@@ -86,12 +86,15 @@ router.beforeEach((to, from, next) => {
       return next('/');
     }
   }
+
   const token = localStorage.getItem('token');
-  const { fetchUser, isLoggedIn } = useUserStore();
+  const { fetchUser, logout, isLoggedIn } = useUserStore();
   if (token) {
     if (!isLoggedIn()) {
       fetchUser().then(() => {
         return next();
+      }).catch(() => {
+        logout();
       });
     }
   }

@@ -13,6 +13,7 @@ export interface Video {
   course?: Course;
   created_at: string;
   updated_at: string;
+  current_progress: number;
 }
 
 export const defaultVideo: Video = {
@@ -24,4 +25,5 @@ export const defaultVideo: Video = {
   subtitle_url: "",
   created_at: "",
   updated_at: "",
+  current_progress: 0,
 };
